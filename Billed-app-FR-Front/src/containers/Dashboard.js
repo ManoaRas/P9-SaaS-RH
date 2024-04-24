@@ -17,9 +17,7 @@ export const filteredBills = (data, status) => {
       } else { /* istanbul ignore next */
         // in prod environment
         const userEmail = JSON.parse(localStorage.getItem("user")).email
-        selectCondition =
-          (bill.status === status) &&
-          ![...USERS_TEST, userEmail].includes(bill.email)
+        selectCondition = (bill.status === status) && ![...USERS_TEST, userEmail].includes(bill.email)
       }
 
       return selectCondition
@@ -96,12 +94,12 @@ export default class {
       bills.forEach((b) => {
         $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
       })
-      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+      $(`#open-bill${this.id}`).css({ background: '#2A2B35' })
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
     } else {
-      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
+      $(`#open-bill${this.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
         <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>

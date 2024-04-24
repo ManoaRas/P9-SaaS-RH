@@ -23,13 +23,6 @@ export default class NewBill {
     e.preventDefault()
 
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-
-    // Check if a file is selected
-    if (!file) {
-      console.error('No file selected')
-      return
-    }
-
     const fileExtension = file.name.split(".").pop().toLowerCase() // Get the file extension
     const allowedExtensions = ["jpg", "jpeg", "png", "gif"] // Define allowed file extensions
 

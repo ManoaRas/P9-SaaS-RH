@@ -60,7 +60,6 @@ describe("Given I am connected as an employee", () => {
 
   describe("When I fill the form ", () => {
     let newBill
-
     beforeEach(() => {
       document.body.innerHTML = NewBillUI()
       const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
@@ -91,23 +90,6 @@ describe("Given I am connected as an employee", () => {
         expect(screen.getByTestId("file").files[0].name).toBe("test.jpg")
         expect(handleChangeFile).toHaveBeenCalled()
         expect(inputFile.files[0]).toEqual(testFile)
-      })
-
-      // Check if a file is selected
-      test("Then a file should be selected", async () => {
-        const mockEvent = {
-          preventDefault: jest.fn(),
-          target: {
-            value: "fakepath\\fakefile.jpg",
-            files: [
-              new File(["fileContent"], "fakefile.jpg", { type: "image/jpeg" }),
-            ],
-          },
-        }
-
-        handleChangeFile(mockEvent)
-
-        expect(handleChangeFile).toHaveBeenCalled()
       })
 
       // Check if an error is triggered when uploading a wrong file
