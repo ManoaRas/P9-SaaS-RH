@@ -6,22 +6,45 @@ export default class NewBill {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
-    const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
-    formNewBill.addEventListener("submit", this.handleSubmit)
-    const file = this.document.querySelector(`input[data-testid="file"]`)
-    file.addEventListener("change", this.handleChangeFile)
-    this.fileUrl = null
-    this.fileName = null
     this.billId = null
+    this.fileName = null
+    this.fileUrl = null
+
+    const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
+    const file = this.document.querySelector(`input[data-testid="file"]`)
+
+    formNewBill.addEventListener("submit", this.handleSubmit)
+    file.addEventListener("change", this.handleChangeFile)
+
     new Logout({ document, localStorage, onNavigate })
   }
-  handleChangeFile = e => {
+
+  handleChangeFile = (e) => {
     e.preventDefault()
+
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+
+    // Check if a file is selected
+    if (!file) {
+      console.error('No file selected')
+      return
+    }
+
+    const fileExtension = file.name.split(".").pop().toLowerCase() // Get the file extension
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif"] // Define allowed file extensions
+
+    // Check if the file extension is allowed
+    if (!allowedExtensions.includes(fileExtension)) {
+      console.error("Invalid file extension")
+      return
+    }
+
+    // Continue with the file upload
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
+
     formData.append('file', file)
     formData.append('email', email)
 
@@ -29,20 +52,21 @@ export default class NewBill {
       .bills()
       .create({
         data: formData,
-        headers: {
-          noContentType: true
-        }
+        headers: { noContentType: true }
       })
       .then(({fileUrl, key}) => {
         console.log(fileUrl)
         this.billId = key
         this.fileUrl = fileUrl
         this.fileName = fileName
-      }).catch(error => console.error(error))
+      })
+      .catch((error) => console.error(error))
   }
-  handleSubmit = e => {
+
+  handleSubmit = (e) => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
@@ -57,6 +81,7 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
+
     this.updateBill(bill)
     this.onNavigate(ROUTES_PATH['Bills'])
   }
@@ -67,10 +92,8 @@ export default class NewBill {
       this.store
       .bills()
       .update({data: JSON.stringify(bill), selector: this.billId})
-      .then(() => {
-        this.onNavigate(ROUTES_PATH['Bills'])
-      })
-      .catch(error => console.error(error))
+      .then(() => { this.onNavigate(ROUTES_PATH['Bills']) })
+      .catch((error) => console.error(error))
     }
   }
 }
